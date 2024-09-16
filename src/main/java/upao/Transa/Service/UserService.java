@@ -42,9 +42,7 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-
         String accessToken = tokenProvider.createAccessToken(authentication);
-
 
         UserProfileResponseDTO userProfileDTO = findByCorreo(authRequestDTO.getCorreo());
         return userMapper.toAuthResponseDTO(accessToken, userProfileDTO);
@@ -55,18 +53,15 @@ public class UserService {
      */
     @Transactional
     public UserProfileResponseDTO signup(SignupRequesDTO signupRequestDTO) {
-
         boolean emailAlreadyExists = userRepository.existsByCorreo(signupRequestDTO.getCorreo());
         if (emailAlreadyExists) {
             throw new BadRequestException("El correo electrónico ya está siendo usado por otro usuario.");
         }
 
-
         Usuario usuario = userMapper.toUser(signupRequestDTO);
         usuario.setContrasena(passwordEncoder.encode(signupRequestDTO.getContrasena()));
         usuario.setRole(Role.User);
         userRepository.save(usuario);
-
 
         return userMapper.toUserProfileResponseDTO(usuario);
     }
@@ -74,9 +69,18 @@ public class UserService {
     /**
      * Método auxiliar para encontrar un usuario por su correo.
      */
-    private UserProfileResponseDTO findByCorreo(String correo) {
+    public UserProfileResponseDTO findByCorreo(String correo) {
         Usuario usuario = userRepository.findOneByCorreo(correo)
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado."));
         return userMapper.toUserProfileResponseDTO(usuario);
     }
+    @Transactional
+    public void resetPassword(String email, String newPassword) {
+        Usuario usuario = userRepository.findOneByCorreo(email)
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado."));
+
+        usuario.setContrasena(passwordEncoder.encode(newPassword));
+        userRepository.save(usuario);
+    }
+
 }

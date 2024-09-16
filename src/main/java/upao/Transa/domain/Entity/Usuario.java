@@ -35,11 +35,9 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-
     @ManyToOne
     @JoinColumn(name = "SuscripcionID")
     private Suscripcion suscripcion;
-
 
     @OneToMany(mappedBy = "usuario")
     private List<Habito> habitos;
@@ -47,4 +45,12 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     private List<Foro> foros;
 
+    // Constructor para inicializar con solo el correo
+    public Usuario(String correo) {
+        this.correo = correo;
+    }
+
+    // Constructor sin argumentos
+    public Usuario() {
+    }
 }

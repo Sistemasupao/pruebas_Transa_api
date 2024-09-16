@@ -39,6 +39,7 @@ public class TokenProvider {
                 .build();
     }
 
+
     public String createAccessToken(Authentication authentication) {
         String role = authentication
                 .getAuthorities()
@@ -56,6 +57,17 @@ public class TokenProvider {
                 .compact();
     }
 
+
+    public String createEmailVerificationToken(Usuario usuario) {
+        return Jwts
+                .builder()
+                .setSubject(usuario.getCorreo())  // El correo es el "subject"
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .compact();
+    }
+
+
     public Authentication getAuthentication(String token) {
         Claims claims = jwtParser.parseClaimsJws(token).getBody();
 
@@ -64,6 +76,10 @@ public class TokenProvider {
 
         User principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+    }
+    public String getEmailFromToken(String token) {
+        Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        return claims.getSubject();  // El subject es el correo
     }
 
     public boolean validateToken(String token) {
@@ -74,4 +90,12 @@ public class TokenProvider {
             return false;
         }
     }
+    public String createPasswordResetToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .compact();
+    }
+
 }

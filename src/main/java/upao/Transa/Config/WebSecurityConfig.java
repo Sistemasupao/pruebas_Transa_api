@@ -23,7 +23,7 @@ public class WebSecurityConfig {
         http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authz)->authz
-                        .requestMatchers("/auth/sign-up","/auth/sign-in").permitAll()
+                        .requestMatchers("/auth/sign-up","/auth/sign-in","/auth/send-email-link","/auth/verify-email","/auth/forgot-password","/auth/reset-password").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
