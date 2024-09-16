@@ -28,9 +28,4 @@ public class SignupRequesDTO {
     @NotNull(message = "El campo genero no debe estar vacío")
     private String genero;
 
-    @NotNull(message = "El campo foro_id no debe estar vacío")
-    private Long foroId;
-
-    @NotNull(message = "El campo suscripcionid no debe estar vacío")
-    private Long suscripcionid;
 }

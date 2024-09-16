@@ -7,7 +7,9 @@ import upao.Transa.domain.Enum.Role;
 public class UserProfileResponseDTO {
     private Long id;
     private String nombre;
-    private String apellido;
+    private String apellidos;
     private String correo;
+    private Integer edad;
+    private String genero;
     private Role role;
 }

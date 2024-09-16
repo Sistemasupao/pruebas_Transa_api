@@ -64,10 +64,10 @@ public class UserService {
 
         Usuario usuario = userMapper.toUser(signupRequestDTO);
         usuario.setContrasena(passwordEncoder.encode(signupRequestDTO.getContrasena()));
-        usuario.setRole(Role.User);  // Se establece el rol por defecto
+        usuario.setRole(Role.User);
         userRepository.save(usuario);
 
-        // Devolver el perfil del usuario recién creado
+
         return userMapper.toUserProfileResponseDTO(usuario);
     }
 
