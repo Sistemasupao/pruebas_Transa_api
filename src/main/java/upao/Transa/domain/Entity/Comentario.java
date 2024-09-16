@@ -14,7 +14,7 @@ public class Comentario {
     @Column(name = "FechadePublicacion",nullable = false)
     private LocalDateTime fechaPublicacion;
     @ManyToOne
-    @JoinColumn(name = "ForoId",nullable = false)
+    @JoinColumn(name = "ForoId",nullable = true)
     private Foro foro;
 
 }

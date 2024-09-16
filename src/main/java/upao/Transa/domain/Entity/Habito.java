@@ -16,7 +16,7 @@ public class Habito {
     @JoinColumn(name = "TipoDeHabitoID",nullable = false)
     private TipoDeHabito tipoDeHabitoId;
     @ManyToOne
-    @JoinColumn(name = "UsuarioId",nullable = false)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
     private Usuario usuario;
 
 }

@@ -1,0 +1,82 @@
+package upao.Transa.Service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import upao.Transa.Exception.BadRequestException;
+import upao.Transa.Mapper.UserMapper;
+import upao.Transa.Repository.UserRepository;
+import upao.Transa.Security.TokenProvider;
+import upao.Transa.domain.Entity.Usuario;
+import upao.Transa.domain.Enum.Role;
+import upao.Transa.dto.request.AuthRequesDTO;
+import upao.Transa.dto.request.SignupRequesDTO;
+import upao.Transa.dto.response.AuthResponseDTO;
+import upao.Transa.dto.response.UserProfileResponseDTO;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+    /**
+     * Autenticación de un usuario.
+     */
+    @Transactional(readOnly = true)
+    public AuthResponseDTO signIn(AuthRequesDTO authRequestDTO) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                authRequestDTO.getCorreo(),
+                authRequestDTO.getContrasena()
+        );
+        // Autenticación usando AuthenticationManagerBuilder
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Generación del token de acceso
+        String accessToken = tokenProvider.createAccessToken(authentication);
+
+        // Buscar el perfil del usuario por correo
+        UserProfileResponseDTO userProfileDTO = findByCorreo(authRequestDTO.getCorreo());
+        return userMapper.toAuthResponseDTO(accessToken, userProfileDTO);
+    }
+
+    /**
+     * Registro de un nuevo usuario.
+     */
+    @Transactional
+    public UserProfileResponseDTO signup(SignupRequesDTO signupRequestDTO) {
+        // Verificar si el correo ya está registrado
+        boolean emailAlreadyExists = userRepository.existsByCorreo(signupRequestDTO.getCorreo());
+        if (emailAlreadyExists) {
+            throw new BadRequestException("El correo electrónico ya está siendo usado por otro usuario.");
+        }
+
+        // Mapeo del DTO a la entidad Usuario y encriptación de la contraseña
+        Usuario usuario = userMapper.toUser(signupRequestDTO);
+        usuario.setContrasena(passwordEncoder.encode(signupRequestDTO.getContrasena()));
+        usuario.setRole(Role.User);  // Se establece el rol por defecto
+        userRepository.save(usuario);
+
+        // Devolver el perfil del usuario recién creado
+        return userMapper.toUserProfileResponseDTO(usuario);
+    }
+
+    /**
+     * Método auxiliar para encontrar un usuario por su correo.
+     */
+    private UserProfileResponseDTO findByCorreo(String correo) {
+        Usuario usuario = userRepository.findOneByCorreo(correo)
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado."));
+        return userMapper.toUserProfileResponseDTO(usuario);
+    }
+}
