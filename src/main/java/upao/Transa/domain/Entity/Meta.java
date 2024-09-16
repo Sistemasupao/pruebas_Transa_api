@@ -1,29 +1,33 @@
 package upao.Transa.domain.Entity;
 
 import jakarta.persistence.*;
-import upao.Transa.domain.Enum.Estado;
+import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
+import java.util.List;
+@Data
 @Entity
-@Table(name="meta")
+@Table(name = "Meta")
 public class Meta {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @Column(name ="NombreMeta",nullable = false,length = 100)
-    private String nombreMeta;
-    @Column(name = "Descripcionmeta",nullable = false,length = 255)
-    private String descripcionMeta;
-    @Enumerated(EnumType.STRING)
-    private Estado estado;
-    @Column(name = "Fechainicio",nullable = false)
-    private LocalDateTime fechainicio;
-    @Column(name = "Fechafin",nullable = false)
-    private LocalDateTime fechafin;
-    @ManyToOne
-    @JoinColumn(name = "SeguimientoId",nullable = false)
-    private Seguimiento seguimiento;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PK_MetaID")
+    private Long id;
+
+    @Column(name = "Descripcion", nullable = false)
+    private String descripcion;
+
+    @Column(name = "Estado", nullable = false)
+    private String estado;
+
+    @Column(name = "FechaInicio", nullable = false)
+    private LocalDateTime fechaInicio;
+
+    @Column(name = "FechaFin", nullable = false)
+    private LocalDateTime fechaFin;
+
+
+    @OneToMany(mappedBy = "meta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Seguimiento> seguimientos;
 }

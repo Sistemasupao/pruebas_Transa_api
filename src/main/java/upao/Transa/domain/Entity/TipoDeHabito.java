@@ -1,15 +1,31 @@
 package upao.Transa.domain.Entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+import java.util.List;
+@Data
 @Entity
 @Table(name = "TipoDeHabito")
 public class TipoDeHabito {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PK_TipoDeHabitoID")
     private Long id;
-    @Column(name="descripcion_Habito",nullable = true)
+
+    @Column(name="descripcion_Habito",nullable = false)
     private String descripcion;
-    @Column(name = "NombreTipo",nullable = true)
+
+    @Column(name = "NombreTipo",nullable = false)
     private String nombre;
+
+
+    @OneToMany(mappedBy = "tipoDeHabito", cascade = CascadeType.ALL)
+    private List<Habito> habitos;
+
+    @OneToMany(mappedBy = "tipoDeHabito", cascade = CascadeType.ALL)
+    private List<Recurso> recursos;
+
+
 }

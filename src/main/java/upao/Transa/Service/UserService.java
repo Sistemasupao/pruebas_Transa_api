@@ -38,14 +38,14 @@ public class UserService {
                 authRequestDTO.getCorreo(),
                 authRequestDTO.getContrasena()
         );
-        // Autenticación usando AuthenticationManagerBuilder
+
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Generación del token de acceso
+
         String accessToken = tokenProvider.createAccessToken(authentication);
 
-        // Buscar el perfil del usuario por correo
+
         UserProfileResponseDTO userProfileDTO = findByCorreo(authRequestDTO.getCorreo());
         return userMapper.toAuthResponseDTO(accessToken, userProfileDTO);
     }
@@ -55,13 +55,13 @@ public class UserService {
      */
     @Transactional
     public UserProfileResponseDTO signup(SignupRequesDTO signupRequestDTO) {
-        // Verificar si el correo ya está registrado
+
         boolean emailAlreadyExists = userRepository.existsByCorreo(signupRequestDTO.getCorreo());
         if (emailAlreadyExists) {
             throw new BadRequestException("El correo electrónico ya está siendo usado por otro usuario.");
         }
 
-        // Mapeo del DTO a la entidad Usuario y encriptación de la contraseña
+
         Usuario usuario = userMapper.toUser(signupRequestDTO);
         usuario.setContrasena(passwordEncoder.encode(signupRequestDTO.getContrasena()));
         usuario.setRole(Role.User);  // Se establece el rol por defecto
