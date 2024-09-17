@@ -45,7 +45,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario")
     private List<Foro> foros;
 
-    // Constructor para inicializar con solo el correo
+
     public Usuario(String correo) {
         this.correo = correo;
     }

@@ -5,6 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private UserDetailsService userDetailsService;
 
     /**
      * Autenticación de un usuario.
@@ -74,6 +76,7 @@ public class UserService {
                 .orElseThrow(() -> new BadRequestException("Usuario no encontrado."));
         return userMapper.toUserProfileResponseDTO(usuario);
     }
+
     @Transactional
     public void resetPassword(String email, String newPassword) {
         Usuario usuario = userRepository.findOneByCorreo(email)
@@ -83,4 +86,40 @@ public class UserService {
         userRepository.save(usuario);
     }
 
+    /**
+     * METODO PARA ELIMINAR UN USUARIO
+     */
+    @Transactional
+    public void eliminarPerfil() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new BadRequestException("No hay usuario autenticado.");
+        }
+
+
+        String correoUsuario = authentication.getName();
+
+
+        Usuario usuario = userRepository.findOneByCorreo(correoUsuario)
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado."));
+
+
+        userRepository.delete(usuario);
+    }
+    @Transactional
+    public void eliminarUsuarioPorCorreo(String correo) {
+        Usuario usuario = userRepository.findOneByCorreo(correo)
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado."));
+
+        userRepository.delete(usuario);
+    }
+    @Transactional
+    public void delete(Long id) {
+        Usuario usuario = userRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Usuario no encontrado con el ID: " + id));
+
+        userRepository.delete(usuario);
+    }
 }

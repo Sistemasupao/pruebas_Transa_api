@@ -1,25 +1,31 @@
 package upao.Transa.Controller;
 
+import jakarta.mail.MessagingException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import upao.Transa.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import upao.Transa.Service.IEmailService;
+import upao.Transa.Service.modelsDTO.EmailDTO;
 
 @RestController
-@RequestMapping("/api/email")
+@RequestMapping("/user")
 public class EmailController {
 
-    @Autowired
-    private EmailService emailService;
+    private final IEmailService emailService;
 
-    @PostMapping("/send")
-    public String sendEmail(@RequestParam String to,
-                            @RequestParam String subject,
-                            @RequestParam String text) {
+    public EmailController(IEmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    @PostMapping("/send-email")
+    public ResponseEntity<String> sendEmail(@RequestBody EmailDTO email) {
         try {
-            emailService.sendSimpleMessage(to, subject, text);
-            return "Email sent successfully";
-        } catch (Exception e) {
-            return "Error sending email: " + e.getMessage();
+            emailService.sendMail(email);
+            return ResponseEntity.ok("Email sent successfully");
+        } catch (MessagingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
     }
 }
