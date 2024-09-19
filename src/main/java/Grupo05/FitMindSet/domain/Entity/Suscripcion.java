@@ -1,5 +1,6 @@
-package Grupo05.FitMindSet.domain;
+package Grupo05.FitMindSet.domain.Entity;
 
+import Grupo05.FitMindSet.domain.Enum.TipoSuscripcion;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;

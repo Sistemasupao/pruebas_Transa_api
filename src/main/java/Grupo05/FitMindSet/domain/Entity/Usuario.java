@@ -1,4 +1,4 @@
-package Grupo05.FitMindSet.domain;
+package Grupo05.FitMindSet.domain.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

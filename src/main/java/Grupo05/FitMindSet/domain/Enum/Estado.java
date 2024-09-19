@@ -1,7 +1,8 @@
-package Grupo05.FitMindSet.domain;
+package Grupo05.FitMindSet.domain.Enum;
 
 public enum Estado {
-    COMPLETADO,
-    PENDIENTE,
-    CANCELADO
+    INICIADO,
+    ENPROCESO,
+    FINALIZADO,
+    DETENIDO,
 }

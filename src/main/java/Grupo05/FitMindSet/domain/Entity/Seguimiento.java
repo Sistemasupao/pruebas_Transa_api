@@ -1,7 +1,6 @@
-package Grupo05.FitMindSet.domain;
-import Grupo05.FitMindSet.domain.Estado;
-import Grupo05.FitMindSet.domain.Meta;
+package Grupo05.FitMindSet.domain.Entity;
 
+import Grupo05.FitMindSet.domain.Enum.Estado;
 import jakarta.persistence.*;
 import lombok.Data;
 
