@@ -17,4 +17,27 @@ public class UserService {
         usuario.setAltura(altura);
         userRepository.save(usuario);
     }
+    public Double actualizarPesoAlturaYCalcularIMC(Long id, Double peso, Double altura) {
+        Usuario usuario = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setPeso(peso);
+        usuario.setAltura(altura);
+        userRepository.save(usuario);
+        return usuario.calcularIMC();
+    }
+
+    public Double calcularIMC(Long id) {
+        Usuario usuario = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return usuario.calcularIMC();
+    }
+
+    public void actualizarPesoAltura(Long id, Double nuevoPeso, Double nuevaAltura) {
+        Usuario usuario = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setPeso(nuevoPeso);
+        usuario.setAltura(nuevaAltura);
+        userRepository.save(usuario);
+    }
 }
