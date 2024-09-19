@@ -1,8 +1,8 @@
 package Grupo05.FitMindSet.domain.Entity;
 
+import Grupo05.FitMindSet.domain.Enum.TipoRecurso;
 import jakarta.persistence.*;
 import lombok.Data;
-import upao.Transa.domain.Enum.TipoRecurso;
 
 import java.math.BigDecimal;
 
